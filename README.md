@@ -1,7 +1,7 @@
 # Smart Water Pump System - Arduino
 Automatic plant watering program for Arduino UNO R4 WiFi.
 
-Manage and collect data from edge devices through the following programs::
+Manage and collect data from edge devices through the following programs:
 * [Smart Water Pump System - Web UI](https://github.com/AlbertYHsC/swps_web.git)
 * [Smart Water Pump System - IoT Server](https://github.com/AlbertYHsC/swps_device.git)
 
