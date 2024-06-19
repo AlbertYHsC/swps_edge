@@ -10,11 +10,12 @@ The following programs are required to manage and collect data from edge devices
 * Manage this device remotely from your smartphone or PC. (by browser)
 
 ## How To Use
-1. Upload this program to the board by arduino IDE.
-2. Connect the board to the IoT Server by USB cable to initialization.
+1. Modify `SWPS_SN` and `AES_KEY` in `swps_secrets.h` file.
+2. Upload this program to the board by arduino IDE.
+3. Connect the board to the IoT Server by USB cable to initialization.
 (For Details, please see [SWPS Web UI](https://github.com/AlbertYHsC/swps_web.git).)
-3. Wait for the board restart and connect to WiFi.
-4. Remove USB cable from the IoT Server and power the board through an additional USB adapter.
+4. Wait for the board restart and connect to WiFi.
+5. Remove USB cable from the IoT Server and power the board through an additional USB adapter.
 
 ## Dependencies
 * [Adafruit ADS1X15](https://github.com/adafruit/Adafruit_ADS1X15)
