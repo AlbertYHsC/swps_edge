@@ -1,4 +1,4 @@
-#define SWPS_SN "TEST0101"
+#define SWPS_SN "SWPS0101"
 
 const byte AES_KEY[16] = {
     0x00, 0x00, 0x00, 0x00,
