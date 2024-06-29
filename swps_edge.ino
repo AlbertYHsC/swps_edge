@@ -15,21 +15,17 @@
 
 #include "swps_secrets.h" 
 
-#define BME_SCK 13
-#define BME_MISO 12
-#define BME_MOSI 11
-#define BME_CS 10
-
 ArduinoLEDMatrix matrix;
 AES128 aes128;
 WiFiClient client;
 RTCTime currentTime;
 Adafruit_ADS1115 ads;
-Adafruit_BME280 bme(BME_CS);
+Adafruit_BME280 bme;
 
 char swps_sn[] = SWPS_SN;
 int status = WL_IDLE_STATUS;
 uint8_t ads_addr = 0x48;
+uint8_t bme_addr = 0x76;
 long soil_moisture = 26000;
 long pump_start_time = 500;
 long detect_interval = 10;
@@ -253,14 +249,19 @@ void setup() {
     if (!ads.begin(ads_addr)) {
         ads_addr++;
         if (ads_addr > 0x4B) {
+            matrix.loadFrame(LEDMATRIX_DANGER);
             while (true);
         }
     }
 
     ads.setGain(GAIN_TWOTHIRDS);
 
-    if (!bme.begin()) {
-        while (true);
+    if (!bme.begin(bme_addr)) {
+        bme_addr++;
+        if (bme_addr > 0x77) {
+            matrix.loadFrame(LEDMATRIX_DANGER);
+            while (true);
+        }
     }
 
     delay(2000);
