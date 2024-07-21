@@ -10,7 +10,7 @@ The following programs are required to manage and collect data from edge devices
 * Manage this device remotely from your smartphone or PC. (by browser)
 
 ## How To Use
-1. Modify `SWPS_SN` and `AES_KEY` in `swps_secrets.h` file.
+1. Modify `SWPS_SN` and `AES_KEY` in `swps_secrets.h` and `swps_secrets.cpp` file.
 2. Upload this program to the board by arduino IDE.
 3. Connect the board to the IoT server using a USB cable to initialize it.
 (For Details, please see [SWPS Web UI](https://github.com/AlbertYHsC/swps_web.git).)

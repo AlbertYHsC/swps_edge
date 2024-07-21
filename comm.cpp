@@ -45,6 +45,7 @@ void setup_comm() {
 
     wifi_retry_times = 0;
 
+    // attempt to connect to SWPS IoT server
     while ((!client.connected()) && (wifi_check)) {
         load_led(swps_logo);
 
@@ -65,6 +66,8 @@ void setup_comm() {
     while (!wifi_check) {
         handle_serial();
     }
+
+    load_led(ledmat_off);
 }
 
 void handle_serial() {

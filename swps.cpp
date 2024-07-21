@@ -2,22 +2,22 @@
 
 Adafruit_ADS1115 ads;
 Adafruit_BME280 bme;
-
 static uint8_t ads_addr;
-static uint8_t bme_addr = 0x76;
+static uint8_t bme_addr;
 static long soil_moisture = 26000;
 static long pump_start_time = 500;
 long detect_interval = 10;
 
 void setup_swps() {
-    bool ads_check = false; //set true to bypass check
-    bool bme_check = false; //set true to bypass check
+    bool ads_check = false; // Set true to bypass I2C device checking
+    bool bme_check = false; // Set true to bypass I2C device checking
 
     RTC.begin();
     pinMode(PIN_D8, OUTPUT);
 
     load_led(swps_logo);
 
+    // The ADS1115 address range is from 0x48 to 0x4B
     for (ads_addr = 0x48; ads_addr <= 0x4B; ads_addr++) {
         if (ads.begin(ads_addr)) {
             ads.setGain(GAIN_TWOTHIRDS);
@@ -26,6 +26,7 @@ void setup_swps() {
         }
     }
 
+    // The BME280 address is 0x76 or 0x77
     for (bme_addr = 0x76; bme_addr <= 0x77; bme_addr++) {
         if (bme.begin(bme_addr)) {
             bme_check = true;
@@ -38,7 +39,7 @@ void setup_swps() {
         while (true);
     }
 
-    delay(2000);
+    delay(2000); // Display SWPS logo for two seconds on startup
 
     load_led(ledmat_off);
 }
@@ -70,14 +71,18 @@ bool upload_sensor_record() {
 
     data["DeviceSN"] = SWPS_SN;
 
+    load_led(LEDMATRIX_CHIP);
+    
     data["Temperature"] = bme.readTemperature();
     data["Humidity"] = bme.readHumidity();
     data["Pressure"] = bme.readPressure() / 100.0F;
 
-    int16_t adc0 = ads.readADC_SingleEnded(0);
-    int16_t adc1 = ads.readADC_SingleEnded(1);
-    int16_t adc2 = ads.readADC_SingleEnded(2);
-    int16_t adc3 = ads.readADC_SingleEnded(3);
+    delayMicroseconds(10);
+
+    int16_t adc0 = ads.readADC_SingleEnded(0); // Light intensity
+    int16_t adc1 = ads.readADC_SingleEnded(1); // Water level
+    int16_t adc2 = ads.readADC_SingleEnded(2); // Soil moisture
+    int16_t adc3 = ads.readADC_SingleEnded(3); // None
     
     data["RawValue0"] = adc0;
     data["RawValue1"] = adc1;
@@ -88,6 +93,10 @@ bool upload_sensor_record() {
     data["Voltage2"] = ads.computeVolts(adc2);
     data["Voltage3"] = ads.computeVolts(adc3);
 
+    delayMicroseconds(10);
+
+    load_led(ledmat_off);
+
     RTC.getTime(detect_time);
     double time_stamp = detect_time.getUnixTime();
     data["DetectTime"] = time_stamp;
@@ -96,17 +105,15 @@ bool upload_sensor_record() {
 
     bool ok = handle_wifi(&doc);
 
-    if (!ok){
-        delay(2000);
-        
-        return false;
-    }
-    else if (doc["Result"] == 1) {
-        return true;
+    if (ok){
+        if (doc["Result"] == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     else {
-        delay(2000);
-
         return false;
     }
 }
@@ -120,6 +127,8 @@ long start_water_pump(int16_t soil_raw) {
         digitalWrite(PIN_D8, HIGH);
         delay(pump_runtime);
         digitalWrite(PIN_D8, LOW);
+
+        delay(500); // Avoid motor interference
     }
     else {
         pump_runtime = 0;

@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include "RTC.h"
 
 #include "swps_secrets.h"
 #include "swps.h"
@@ -26,13 +27,9 @@ void setup() {
                 setup_check = false;
             }
         }
-
-        delay(2000);
     }
     
     set_params();
-
-    load_led(ledmat_off);
 }
 
 void loop() {
@@ -45,7 +42,13 @@ void loop() {
     if ((currentTime.getMinutes() % detect_interval == 0) && (!detect_lock)) {
         set_params();
         detect_lock = upload_sensor_record();
-        load_led(LEDMATRIX_HEART_SMALL);
+        if (detect_lock) {
+            load_led(LEDMATRIX_HEART_SMALL);
+            delay(10000); // Avoid RTC bias causing secondary measurements
+        }
+        else {
+            delay(2000); // Try measuring again after two seconds
+        }
     }
     else if (currentTime.getMinutes() % detect_interval != 0) {
         detect_lock = false;

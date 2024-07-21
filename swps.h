@@ -1,13 +1,12 @@
 #ifndef SWPS_H
 #define SWPS_H
 
-#include "RTC.h"
-
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_ADS1X15.h>
 #include <Adafruit_BME280.h>
+#include "RTC.h"
 
 #include "swps_secrets.h"
 #include "comm.h"
